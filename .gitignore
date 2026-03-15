@@ -1,0 +1,83 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+server/logs/
+
+# Environment
+.env
+.env.local
+admin/api/.env
+
+# Node
+node_modules/
+web/admin/node_modules/
+web/admin/dist/
+web/web-v2/node_modules/
+web/web-v2/dist/
+.vite/
+
+# Build artifacts
+*.pyc
+*.pyo
+
+# User uploads
+server/uploads/
+
+# Backups
+server/backups/
+*.sql
+
+# Claude
+.claude/
+
+# Temporary files
+tmpclaude-*
+nul
+
+# Data/dumps
+data/
+*.sql.gz
+*.dump
+push_payload.json
+article_vc.md

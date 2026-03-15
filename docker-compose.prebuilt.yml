@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  app:
+    image: ghcr.io/monexo-stack/vpn-telegram-app:latest
+    container_name: vpn-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:80"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-vpn}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-vpn_db}
+      - DOMAIN=${DOMAIN}
+      - ADMIN_SECRET_KEY=${ADMIN_SECRET_KEY}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - SETUP_TOKEN=${SETUP_TOKEN}
+      - BOT_TOKEN_SETUP=${BOT_TOKEN_SETUP}
+      - ADMIN_TGID_SETUP=${ADMIN_TGID_SETUP}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - JSON_LOGS=${JSON_LOGS:-true}
+      - CORS_ORIGINS=${CORS_ORIGINS:-https://${DOMAIN}}
+      - DB_POOL_SIZE=${DB_POOL_SIZE:-15}
+      - DB_MAX_OVERFLOW=${DB_MAX_OVERFLOW:-10}
+    volumes:
+      - app-data:/app/data
+      - app-logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 15s
+      retries: 3
+    networks:
+      - vpn-network
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: vpn-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-vpn_db}
+      - POSTGRES_USER=${POSTGRES_USER:-vpn}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vpn} -d ${POSTGRES_DB:-vpn_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vpn-network
+
+  adminer:
+    image: adminer:latest
+    container_name: vpn-adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - vpn-network
+
+volumes:
+  postgres-data:
+  app-data:
+  app-logs:
+
+networks:
+  vpn-network:
+    driver: bridge
