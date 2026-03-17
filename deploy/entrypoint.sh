@@ -9,4 +9,4 @@ fi
 echo "Initializing database..."
 
 # Start supervisor
-exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/app.conf
